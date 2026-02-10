@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>あなたはどんなブロガー？実はこんな人</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-screen p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #555;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .question-screen {
+            display: none;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            color: #764ba2;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            padding: 18px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .option:hover {
+            border-color: #764ba2;
+            background: #f0f0ff;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            font-weight: bold;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .result-type {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #764ba2;
+        }
+
+        .result-description {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #555;
+            text-align: left;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .result-traits {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .result-traits h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .trait-item {
+            background: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #764ba2;
+        }
+
+        .restart-btn {
+            background: white;
+            color: #764ba2;
+            border: 2px solid #764ba2;
+        }
+
+        .restart-btn:hover {
+            background: #764ba2;
+            color: white;
+        }
+
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            .question-text {
+                font-size: 20px;
+            }
+            .result-type {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 あなたはどんなブロガー？<br>実はこんな人</h1>
+            <p>10問の質問で診断！</p>
+        </div>
+
+        <div class="content">
+            <!-- スタート画面 -->
+            <div class="start-screen" id="startScreen">
+                <p>
+                    ブログを書くスタイルは人それぞれ。<br>
+                    あなたはどんなタイプのブロガー？<br><br>
+                    10個の質問に答えるだけで、<br>
+                    あなたのブログタイプが分かります！
+                </p>
+                <button class="btn" onclick="startQuiz()">診断スタート！</button>
+            </div>
+
+            <!-- 質問画面 -->
+            <div class="question-screen" id="questionScreen">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="question">
+                    <div class="question-number" id="questionNumber"></div>
+                    <div class="question-text" id="questionText"></div>
+                    <div class="options" id="options"></div>
+                </div>
+            </div>
+
+            <!-- 結果画面 -->
+            <div class="result-screen" id="resultScreen">
+                <div class="result-icon" id="resultIcon"></div>
+                <div class="result-type" id="resultType"></div>
+                <div class="result-description" id="resultDescription"></div>
+                <div class="result-traits" id="resultTraits"></div>
+                <button class="btn restart-btn" onclick="restartQuiz()">もう一度診断する</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "記事を書くとき、まず何を考える？",
+                options: [
+                    { text: "検索キーワード", type: "seo" },
+                    { text: "読者の気持ち", type: "empathy" },
+                    { text: "自分の伝えたいこと", type: "brand" },
+                    { text: "楽しく書けるかどうか", type: "hobby" }
+                ]
+            },
+            {
+                question: "アクセス数は気になる？",
+                options: [
+                    { text: "めちゃくちゃ気になる！毎日チェック", type: "seo" },
+                    { text: "そこそこ。週1くらいで見る", type: "brand" },
+                    { text: "たまに見る程度", type: "empathy" },
+                    { text: "あまり気にしない", type: "hobby" }
+                ]
+            },
+            {
+                question: "タイトルは何回くらい考え直す？",
+                options: [
+                    { text: "1回で決める！直感派", type: "hobby" },
+                    { text: "3回くらい。検索されやすさ重視", type: "seo" },
+                    { text: "何回も。読者の心に刺さるまで", type: "empathy" },
+                    { text: "めちゃくちゃ悩む。ブランドイメージも大事", type: "brand" }
+                ]
+            },
+            {
+                question: "収益記事は書いてる？",
+                options: [
+                    { text: "バリバリ書いてる", type: "seo" },
+                    { text: "たまに書く", type: "brand" },
+                    { text: "読者に役立つなら書く", type: "empathy" },
+                    { text: "ほぼない。趣味だから", type: "hobby" }
+                ]
+            },
+            {
+                question: "記事の文字数、どれくらい？",
+                options: [
+                    { text: "3000文字以上！SEO対策", type: "seo" },
+                    { text: "2000文字前後。読みやすさ重視", type: "empathy" },
+                    { text: "バラバラ。内容次第", type: "brand" },
+                    { text: "書きたいだけ書く", type: "hobby" }
+                ]
+            },
+            {
+                question: "SNSでの発信は？",
+                options: [
+                    { text: "戦略的に発信。集客が目的", type: "seo" },
+                    { text: "ファンとの交流を大切に", type: "empathy" },
+                    { text: "ブランディングの一環として", type: "brand" },
+                    { text: "気が向いたら投稿", type: "hobby" }
+                ]
+            },
+            {
+                question: "他のブログを見るとき、何を見る？",
+                options: [
+                    { text: "SEO対策やアフィリエイトの手法", type: "seo" },
+                    { text: "文章の書き方や構成", type: "empathy" },
+                    { text: "デザインや世界観", type: "brand" },
+                    { text: "純粋に内容を楽しむ", type: "hobby" }
+                ]
+            },
+            {
+                question: "記事の更新頻度は？",
+                options: [
+                    { text: "週3以上。コンスタントに", type: "seo" },
+                    { text: "週1〜2。質を保ちたい", type: "empathy" },
+                    { text: "月2〜3。じっくり作り込む", type: "brand" },
+                    { text: "不定期。書きたいときに", type: "hobby" }
+                ]
+            },
+            {
+                question: "ブログを始めた理由は？",
+                options: [
+                    { text: "副収入が欲しかった", type: "seo" },
+                    { text: "誰かの役に立ちたかった", type: "empathy" },
+                    { text: "自分のブランドを作りたかった", type: "brand" },
+                    { text: "好きなことを発信したかった", type: "hobby" }
+                ]
+            },
+            {
+                question: "コメントが来たらどうする？",
+                options: [
+                    { text: "SEO効果を考えて返信", type: "seo" },
+                    { text: "嬉しくて必ず丁寧に返信", type: "empathy" },
+                    { text: "ブランドイメージに合う返信を心がける", type: "brand" },
+                    { text: "気楽に返信。楽しく交流", type: "hobby" }
+                ]
+            }
+        ];
+
+        const results = {
+            seo: {
+                icon: "📊",
+                type: "SEO戦略家タイプ",
+                description: "あなたは生粋の「数字で語る」ブロガー。検索順位もアクセス数も把握してるし、キーワード選定も完璧。でも…読者との温度感、ちょっと薄くない？笑　データも大事だけど、たまには「熱い想い」を前面に出してみると、ファンがつくかも！",
+                traits: [
+                    "✅ SEO対策はバッチリ",
+                    "✅ データ分析が得意",
+                    "✅ 収益化に積極的",
+                    "⚠️ 読者との距離感に注意",
+                    "💡 たまには感情を出してみよう"
+                ]
+            },
+            empathy: {
+                icon: "💝",
+                type: "共感ストーリーテラータイプ",
+                description: "あなたは「心」で書くブロガー。データより感情、検索より熱量。読者の気持ちに寄り添う文章は、きっと誰かの心に刺さってる。でも…収益導線、ちょっと置いてけぼりかも？笑　読者想いは素晴らしいけど、自分のことも大切にね！",
+                traits: [
+                    "✅ 読者に寄り添える",
+                    "✅ 文章が温かい",
+                    "✅ ファンができやすい",
+                    "⚠️ 収益化が苦手かも",
+                    "💡 戦略も少し取り入れてみよう"
+                ]
+            },
+            brand: {
+                icon: "✨",
+                type: "ブランド構築型クリエイター",
+                description: "あなたは「世界観」を作るブロガー。デザインもコンテンツも一貫性があって、ブログ全体がひとつの作品。でも…完璧主義すぎて更新が遅くない？笑　こだわりは武器だけど、時には60点で公開する勇気も必要かも！",
+                traits: [
+                    "✅ 世界観が統一されている",
+                    "✅ デザインセンス抜群",
+                    "✅ ファンが根強い",
+                    "⚠️ 更新頻度が低めかも",
+                    "💡 たまには気楽に投稿してみよう"
+                ]
+            },
+            hobby: {
+                icon: "🌈",
+                type: "趣味満喫マイペース型",
+                description: "あなたは「自由」を謳歌するブロガー。数字もSEOも気にせず、好きなことを好きなように書く。その姿勢、めちゃくちゃ素敵！でも…もうちょっと戦略があると、もっと届くかも？笑　でも無理はしないでね。今のままでも最高だから！",
+                traits: [
+                    "✅ ストレスフリーで続けられる",
+                    "✅ 個性的なコンテンツ",
+                    "✅ 純粋に楽しめている",
+                    "⚠️ 収益化や集客は苦手",
+                    "💡 興味があれば少しずつ学んでみよう"
+                ]
+            }
+        };
+
+        let currentQuestion = 0;
+        let scores = { seo: 0, empathy: 0, brand: 0, hobby: 0 };
+
+        function startQuiz() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('questionScreen').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('questionNumber').textContent = `質問 ${currentQuestion + 1}/10`;
+            document.getElementById('questionText').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option.text;
+                optionDiv.onclick = () => selectOption(index, option.type);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            updateProgress();
+        }
+
+        function selectOption(index, type) {
+            scores[type]++;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.remove('selected');
+                if (i === index) {
+                    opt.classList.add('selected');
+                }
+            });
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }, 300);
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showResult() {
+            const maxScore = Math.max(...Object.values(scores));
+            const resultType = Object.keys(scores).find(key => scores[key] === maxScore);
+            const result = results[resultType];
+
+            document.getElementById('questionScreen').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'block';
+            
+            document.getElementById('resultIcon').textContent = result.icon;
+            document.getElementById('resultType').textContent = result.type;
+            document.getElementById('resultDescription').textContent = result.description;
+            
+            const traitsContainer = document.getElementById('resultTraits');
+            traitsContainer.innerHTML = '<h3>あなたの特徴</h3>';
+            result.traits.forEach(trait => {
+                const traitDiv = document.createElement('div');
+                traitDiv.className = 'trait-item';
+                traitDiv.textContent = trait;
+                traitsContainer.appendChild(traitDiv);
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            scores = { seo: 0, empathy: 0, brand: 0, hobby: 0 };
+            document.getElementById('resultScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
